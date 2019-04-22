@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta name="ROBOTS" content="NOINDEX, NOFOLLOW" />
+	<meta name="description" content="Spin the Wheel of fortune to win exciting rewards!">
+	<meta name="viewport"
+		content="width=device-width, maximum-scale=1.0, initial-scale=1.0, user-scalable=no, minimum-scale=1.0">
+	<script crossorigin="anonymous" type="text/javascript"
+		src="https://i3.sdlcdn.com/static/mobile/wap/js/jquery.base.9dcfc111b3f4223e69b1.js"></script>
+	<style type="text/css">
+		body {
+			margin: 0px;
+			padding: 0px;
+			background-color: #3e0e6e;
+			background-image: url(https://i.sdlcdn.com/img/marketing-mailers/mailer/2016/UserGrowth/2018/19dec/mainbg.png);
+			background-repeat: repeat;
+			background-size: contain;
+			background-position: center;
+			color: white;
+			font-family: maison;
+		}
+
+		.mainwrapper {
+			width: 100%;
+			height: 90vh;
+		}
+
+		.disabledScr {
+			position: relative;
+			top: 0;
+			left: 0;
+			margin: auto;
+			pointer-events: none;
+			z-index: 14;
+		}
+
+		.disabledScr .loader-mask {
+			width: 40px;
+			text-align: center;
+			position: fixed;
+			background: url("https://m.snapdeal.com/static/mobile/img/mobile/mobileviews/loader-xhdpi.gif?v=4") #fff no-repeat center center;
+			height: 40px;
+			background-size: 25px 25px;
+			pointer-events: none;
+			top: 50%;
+			left: 45%;
+			right: 0;
+			bottom: 0;
+			border-radius: 50%;
+		}
+
+		@font-face {
+			font-family: lemon;
+			src: url(https://i.sdlcdn.com/img/marketing-mailers/mailer/2016/UserGrowth/2018/19dec/LemonJellyPersonalUse.ttf);
+		}
+
+		@font-face {
+			font-family: maison;
+			src: url(https://i.sdlcdn.com/img/marketing-mailers/mailer/2016/UserGrowth/2018/13aug/MaisonNeueAPP-Book.otf);
+		}
+
+		@font-face {
+			font-family: gotham;
+			src: url(https://i.sdlcdn.com/img/marketing-mailers/mailer/2016/UserGrowth/2018/19dec/Gotham-Black_0.otf);
+		}
+
+		.hidden {
+			display: none;
+		}
+
+		.invisible {
+			visibility: hidden;
+		}
+	</style>
+
+	<style>
+		#score-board{
+			width: 320px;
+			margin: 8px auto;
+			height: 20px;
+			position: relative;
+		}
+		#game-status{
+			position: absolute;
+			top: 0;
+			left: 120px;
+		}
+		#cards-wrapper {
+			width: 320px;
+			margin: 0 auto;
+			height: 180px;
+			position: relative;
+		}
+
+		.card {
+			width: 100px;
+			height: 140px;
+			margin: 5px;
+			position: absolute;
+		}
+
+		#card1 {
+			left: 0;
+		}
+
+		#card2 {
+			left: 105px;
+		}
+
+		#card3 {
+			left: 210px;
+		}
+
+		.card img {
+			width: 100%;
+			height: 100%;
+		}
+
+		#game-controls {
+			display: flex;
+			justify-content: space-around;
+		}
+
+		.btn {
+			width: 100px;
+			height: 30px;
+			background-color: red;
+			text-align: center;
+			line-height: 30px;
+		}
+		.flip{
+			animation: cardrotation 0.7s;
+		}
+		@keyframes cardrotation{
+			10%{
+				transform: rotate3d(0,1,0,10deg);
+			}
+			30%{
+				transform: rotate3d(0,1,0,30deg);
+			}
+			50%{
+				transform: rotate3d(0,1,0,50deg);
+			}
+			60%{
+				transform: rotate3d(0,1,0,70deg);
+			}
+			100%{
+				transform: rotate3d(0,1,0,90deg);
+				visibility: hidden;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div id="disabledScr" class="disabledScr hidden">
+		<div class="loader-mask"></div>
+	</div>
+	<div class="mainwrapper">
+		<div id="score-board">
+			<div class="score">Your Level: <span id="game-level">0</span></div>
+			<div id="game-status"></div>
+		</div>
+		<div id="cards-wrapper">
+			<div id="card1" class="card">
+				<img class="cardback hidden" src="https://n1.sdlcdn.com/imgs/b/f/c/ug_cardback.jpg" />
+				<img class="cardfront" src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Aceofspades.svg/170px-Aceofspades.svg.png" />
+			</div>
+			<div id="card2" class="card">
+				<img class="cardback hidden" src="https://n1.sdlcdn.com/imgs/b/f/c/ug_cardback.jpg" />
+				<img class="cardfront" src="https://i.pinimg.com/originals/64/fe/3a/64fe3aaedd0cd7e7a89f15127bbcc3f4.png" />
+			</div>
+			<div id="card3" class="card">
+				<img class="cardback hidden" src="https://n1.sdlcdn.com/imgs/b/f/c/ug_cardback.jpg" />
+				<img class="cardfront" src="https://i.pinimg.com/originals/ff/2f/d3/ff2fd392f787517c302c4dce62ea83bf.jpg" />
+			</div>
+		</div>
+		<div id="game-controls">
+			<div class="btn" id="play-game">PLAY</div>
+			<div class="btn" id="reset-game">Reset Game</div>
+		</div>
+		
+	</div>
+
+	<script type="text/javascript">
+		var CARDMONTE =
+			(function () {
+				var config, fn;
+				config = {
+					score: 0,
+					cardPositions: {
+						card1: { left: "0px" },
+						card2: { left: "105px" },
+						card3: { left: "210px" }
+					},
+					card1: $("#card1"),
+					card2: $("#card2"),
+					card3: $("#card3"),
+					moves: [],
+					moveCounter: 0,
+					level: 0,
+					suffleTime: 700,
+					incSuffleSpeed: 5
+				};
+				fn = {
+					_init: function () {
+						fn._bindEvents();
+						fn._setLevel();
+					},
+					_bindEvents: function () {
+						$("#play-game").on("click", function () {
+							fn._playGame();
+						});
+						$("#reset-game").on("click", function () {
+							fn._resetGame();
+						});
+					},
+					_bindCardClick: function(){
+						$(".card").on("click", function(evt){
+							if(config.playing) return;
+							$(".card").off("click");
+							if(evt.currentTarget){
+								$(evt.currentTarget).find(".cardback").addClass("flip");
+								window.setTimeout(function(){
+									$(evt.currentTarget).find(".cardfront").removeClass("hidden");
+									$(evt.currentTarget).find(".cardback").addClass("hidden");
+								},700);
+							}
+							if(evt.currentTarget.id == "card2"){
+								config.level++;
+								fn._setLevel();
+								console.log("You Won");
+								$("#game-status").text("You Won, play next round!");
+							} else {
+								fn._showCards();
+								console.log("You lose");
+								$("#game-status").text("Sorry You Lose :(");
+							}
+						});
+					},
+					_setLevel: function(){
+						$("#game-level").text(config.level);
+					},
+					_generateMove: function () {
+						var c1 = fn._getRandomNumber(1, 3);
+						var c2 = fn._getRandomNumber(1, 3);
+						while (c1 == c2) {
+							c2 = fn._getRandomNumber(1, 3);
+						}
+						return [c1, c2];
+					},
+					_resetGame: function () {
+						if (!config.playing) {
+							config.level = 0;
+							fn._setLevel();
+							config.card1.animate(config.cardPositions.card1);
+							config.card2.animate(config.cardPositions.card2);
+							config.card3.animate(config.cardPositions.card3);
+							fn._showCards();
+						}
+					},
+					_showCards: function(){
+						$(".cardfront").removeClass("hidden");
+						$(".cardback").addClass("hidden");
+					},
+					_hideCards: function(){
+						$(".cardfront").addClass("hidden");
+						$(".cardback").removeClass("hidden").removeClass("flip");
+					},
+					_playGame: function () {
+						if (!config.playing) {
+							fn._bindCardClick();
+							fn._hideCards();
+							config.moveCounter = 0;
+							window.setTimeout(function(){
+								config.playing = true;
+								fn._suffleCards(config.suffleTime);
+							},500);
+						}
+					},
+					_getRandomNumber: function (min, max) {
+						return Math.floor(Math.random() * (max + 1 - min)) + min;
+					},
+					_suffleCards: function (time) {
+						var nextMove = fn._generateMove();
+						var c1 = nextMove[0];
+						var c2 = nextMove[1];
+						var delay = time || 500;
+						delay = (delay - config.level*config.incSuffleSpeed);
+						if(delay < 100){
+							delay = 100;
+						}
+						if (c1 && c2 && c1 != c2) {
+							c1 = config["card" + c1];
+							c2 = config["card" + c2];
+							var tempPos = c2.position().left;
+							c2.animate({ left: c1.position().left }, delay, "swing");
+							c1.animate({ left: tempPos }, delay, "swing", function () {
+								if (config.moveCounter < (config.level + 3)) {
+									config.moveCounter++;
+									window.setTimeout(function () { fn._suffleCards(delay) }, 20);
+								} else {
+									config.playing = false;
+								}
+							});
+						}
+					}
+
+				}
+				return {
+					init: function () {
+						return fn._init.apply(this, arguments);
+					},
+					suffleCards: function () {
+						return fn._suffleCards.apply(this, arguments);
+					},
+				}
+			})();
+
+		CARDMONTE.init();
+
+
+	</script>
+</body>
+
+</html>
